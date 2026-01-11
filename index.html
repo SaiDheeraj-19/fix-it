@@ -1,0 +1,131 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fix It Kurnool - Repairs & Accessories</title>
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Fix It">
+    <link rel="apple-touch-icon" href="https://img.icons8.com/color/192/iphone-x.png">
+    
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#ff0000', // Pure Red
+                        opal: {
+                            50: '#000000', // Black
+                            100: '#121212', // Rich Black
+                            200: '#1a1a1a', // Coal
+                            500: '#ff0000', // Primary Red
+                            800: '#ffffff', // White (for inverted text)
+                        },
+                        mineral: {
+                            blue: '#0a0a0a',
+                            navy: '#ffffff', // Inverted for White text on Black
+                        },
+                        amazon: {
+                            yellow: '#ff0000', // Red for theme consistency
+                            white: '#000000',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Manrope', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-card {
+            background: rgba(18, 18, 18, 0.8);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 0, 0, 0.1);
+        }
+        .bento-shadow {
+            box-shadow: 0 10px 40px -10px rgba(255, 0, 0, 0.15);
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            /* Prevent bouncing on mobile */
+            overscroll-behavior-y: contain;
+        }
+        /* Mobile app touch highlights */
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
+    <!-- Local SEO Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "Fix It Kurnool",
+      "image": "https://picsum.photos/800/600",
+      "@id": "",
+      "url": "https://fixitkurnool.shop",
+      "telephone": "+91-9182919360",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Shop no 6, venkateshwara swamy Temple Line, near ITC circle, Krishna Reddy Nagar, New Krishna Nagar, Kalluru",
+        "addressLocality": "Kurnool",
+        "postalCode": "518002",
+        "addressRegion": "Andhra Pradesh",
+        "addressCountry": "IN"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 15.8223,
+        "longitude": 78.0359
+      },
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday"
+        ],
+        "opens": "10:00",
+        "closes": "20:00"
+      }
+    }
+    </script>
+<script type="importmap">
+{
+  "imports": {
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.12.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.35.0",
+    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@^2.48.1"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="bg-black font-sans text-white">
+    <div id="root"></div>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
