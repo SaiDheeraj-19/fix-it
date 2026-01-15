@@ -12,17 +12,17 @@ const ProductTile: React.FC<ProductTileProps> = ({ product, onAddToCart, onViewD
   const isLarge = product.size === 'large';
   const isService = product.isQuoteRequired;
   const isModelRequired = product.isModelRequired || product.isUniversalModel;
-  
+
   // Skins and Screen Guards always require store contact per user request
   const isContactOnly = product.isContactOnly || product.category === 'Skins' || product.category === 'ScreenGuards';
-  
+
   const handleAction = (e: React.MouseEvent) => {
     e.stopPropagation();
     onAddToCart(1);
   };
-  
+
   return (
-    <div 
+    <div
       onClick={() => onViewDetails(product)}
       className={`
         relative rounded-[40px] overflow-hidden bento-shadow transition-all duration-300 active:scale-[0.98] group cursor-pointer
@@ -30,13 +30,13 @@ const ProductTile: React.FC<ProductTileProps> = ({ product, onAddToCart, onViewD
         bg-neutral-900 border border-white/5 hover:border-white/20
       `}
     >
-      <img 
-        src={product.image} 
-        alt={product.name} 
+      <img
+        src={product.image}
+        alt={product.name}
         className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 opacity-60"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-      
+
       <div className="absolute top-4 left-4 flex flex-col items-start gap-1 z-10">
         {product.isPopular && (
           <div className="bg-[#232F3E] text-white text-[8px] font-black px-2 py-1 rounded-lg shadow-sm flex items-center gap-1 border border-white/10 uppercase tracking-widest">
@@ -57,9 +57,9 @@ const ProductTile: React.FC<ProductTileProps> = ({ product, onAddToCart, onViewD
             <h3 className={`font-extrabold text-white leading-tight ${isLarge ? 'text-xl sm:text-2xl' : 'text-sm sm:text-base'}`}>
               {product.name}
             </h3>
-            
+
             {isContactOnly ? (
-               <p className="text-primary text-[10px] font-black mt-1 uppercase tracking-wider">Contact Store</p>
+              <p className="text-primary text-[10px] font-black mt-1 uppercase tracking-wider">Contact Store</p>
             ) : (
               isService ? (
                 <p className="text-primary text-[10px] font-black mt-1 uppercase tracking-wider">Instant Quote</p>
@@ -75,20 +75,26 @@ const ProductTile: React.FC<ProductTileProps> = ({ product, onAddToCart, onViewD
           </div>
 
           <div className="flex items-center gap-2">
-            <button 
-              onClick={handleAction}
-              className={`
-                flex items-center justify-center rounded-2xl bg-primary text-black shadow-xl shadow-primary/20 transition-all hover:bg-white flex-1
-                ${isLarge ? 'h-11' : 'h-10'}
-              `}
-            >
-              <span className={`font-black uppercase tracking-widest ${isLarge ? 'text-[10px] mr-2' : 'text-[9px] mr-2'}`}>
-                {isContactOnly ? 'Choose Model' : 'Add To Cart'}
-              </span>
-              <span className={`material-symbols-outlined ${isLarge ? 'text-xl' : 'text-lg'}`}>
-                {isContactOnly ? 'phone_iphone' : 'shopping_bag'}
-              </span>
-            </button>
+            {product.isSoldOut ? (
+              <div className={`flex items-center justify-center rounded-2xl bg-neutral-800 text-white/20 font-black border border-white/5 uppercase tracking-widest ${isLarge ? 'h-11 w-full text-[10px]' : 'h-10 w-full text-[9px]'}`}>
+                Sold Out
+              </div>
+            ) : (
+              <button
+                onClick={handleAction}
+                className={`
+                  flex items-center justify-center rounded-2xl bg-primary text-black shadow-xl shadow-primary/20 transition-all hover:bg-white flex-1
+                  ${isLarge ? 'h-11' : 'h-10'}
+                `}
+              >
+                <span className={`font-black uppercase tracking-widest ${isLarge ? 'text-[10px] mr-2' : 'text-[9px] mr-2'}`}>
+                  {isContactOnly ? 'Choose Model' : 'Add To Cart'}
+                </span>
+                <span className={`material-symbols-outlined ${isLarge ? 'text-xl' : 'text-lg'}`}>
+                  {isContactOnly ? 'phone_iphone' : 'shopping_bag'}
+                </span>
+              </button>
+            )}
           </div>
         </div>
       </div>

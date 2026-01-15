@@ -86,7 +86,7 @@ const Footer: React.FC = () => {
       <div className="mt-12 text-center space-y-4">
         <div className="flex items-center justify-center gap-4">
           <div className="h-px bg-white/5 flex-1" />
-          <p className="text-[9px] font-black text-white/10 uppercase tracking-[0.5em] whitespace-nowrap">
+          <p className="text-[9px] font-black text-white/60 uppercase tracking-[0.5em] whitespace-nowrap">
             © 2026 FIX IT KURNOOL • AUTHENTIC GEAR
           </p>
           <div className="h-px bg-white/5 flex-1" />

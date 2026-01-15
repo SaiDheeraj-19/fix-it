@@ -5,11 +5,11 @@ import Logo from './Logo';
 
 export const HomePage: React.FC = () => {
     return (
-        <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-4 relative overflow-hidden font-sans">
+        <div className="min-h-screen text-white flex flex-col items-center justify-center p-4 relative overflow-hidden font-sans">
             {/* Dynamic Background */}
-            <div className="absolute inset-0 bg-neutral-900">
-                <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-neutral-800 via-black to-black opacity-60"></div>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] animate-pulse"></div>
+            <div className="absolute inset-0 bg-black/40">
+                <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/0 via-black/20 to-black/80"></div>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/10 rounded-full blur-[120px] animate-pulse"></div>
             </div>
 
             <div className="relative z-10 text-center flex flex-col items-center gap-8 max-w-2xl">
@@ -69,14 +69,16 @@ export const HomePage: React.FC = () => {
 
             {/* Ready to Get Started Section */}
             <div className="relative z-10 mt-20 mb-10 text-center animate-in fade-in duration-1000 delay-1000">
-                <h2 className="text-2xl font-black uppercase italic tracking-tight text-white mb-3">Ready to get started?</h2>
+                <h2 className="text-3xl font-black uppercase italic tracking-tighter text-primary mb-3 font-mono">
+                    <span className="text-white">Ready</span> to get <span className="text-white">started?</span>
+                </h2>
                 <p className="text-xs text-white/40 font-bold uppercase tracking-widest max-w-md mx-auto">
                     Browse our collection of premium mobile accessories and place your orders in home page
                 </p>
             </div>
             {/* Footer Copyright */}
-            <div className="absolute bottom-4 text-center w-full z-20 animate-in fade-in duration-1000 delay-1000">
-                <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em]">
+            <div className="absolute bottom-4 text-center w-full z-20 animate-in fade-in duration-1000">
+                <p className="text-[10px] font-black text-white/80 uppercase tracking-[0.3em]">
                     © 2026 FIX IT KURNOOL • AUTHENTIC GEAR
                 </p>
             </div>

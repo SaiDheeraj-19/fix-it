@@ -13,7 +13,7 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, onClos
   const isContactOnly = product.category === 'Skin' || product.category === 'Protection';
   // Allow image for Skins specifically
   const showDetailImage = !isContactOnly || product.category === 'Skin';
-  
+
   const handleAction = () => {
     if (isContactOnly) {
       const message = encodeURIComponent(`Hi Fix It Kurnool, I am interested in ${product.name}. Can you help me with the availability and pricing?`);
@@ -30,7 +30,7 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, onClos
   return (
     <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-200">
       <div className="absolute inset-0 bg-black/90 backdrop-blur-md" onClick={onClose} />
-      
+
       <div className="relative w-full max-w-2xl bg-black rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col border border-white/10 animate-in slide-in-from-bottom-4 duration-300">
         <div className="p-4 border-b border-white/5 flex items-center justify-between sticky top-0 bg-black z-10">
           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40">{product.category} Details</p>
@@ -44,17 +44,17 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, onClos
             {/* Image Area */}
             {showDetailImage ? (
               <div className="w-full md:w-1/2 p-4 sm:p-8 bg-neutral-900/30">
-                <img 
-                  src={product.image} 
-                  alt={product.name} 
-                  className="w-full aspect-square object-cover rounded-2xl shadow-2xl border border-white/5" 
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-full aspect-square object-cover rounded-2xl shadow-2xl border border-white/5"
                 />
               </div>
             ) : (
               <div className="w-full md:w-1/2 p-12 bg-neutral-900/30 flex items-center justify-center">
-                 <span className="material-symbols-outlined text-8xl text-white/5 select-none">
-                    shield_with_heart
-                 </span>
+                <span className="material-symbols-outlined text-8xl text-white/5 select-none">
+                  shield_with_heart
+                </span>
               </div>
             )}
 
@@ -63,7 +63,7 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, onClos
               <div className="mb-6">
                 <h2 className="text-2xl sm:text-3xl font-black text-white leading-tight mb-2">{product.name}</h2>
                 <p className="text-primary text-[10px] font-black uppercase tracking-widest mb-4">Fix It Authorized Kurnool</p>
-                
+
                 {!isContactOnly && (
                   <div className="flex items-baseline gap-1 mt-4 border-b border-white/5 pb-4">
                     <span className="text-sm font-bold text-white/40">₹</span>
@@ -92,14 +92,14 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, onClos
                   <div className="space-y-3">
                     <h4 className="text-[10px] font-black uppercase tracking-widest text-primary">Quantity</h4>
                     <div className="flex items-center gap-4 bg-white/5 p-2 rounded-2xl border border-white/10 w-fit">
-                      <button 
+                      <button
                         onClick={decrementQty}
                         className="size-10 rounded-xl bg-black flex items-center justify-center text-white hover:text-primary transition-colors active:scale-90"
                       >
                         <span className="material-symbols-outlined">remove</span>
                       </button>
                       <span className="w-8 text-center font-black text-lg">{quantity}</span>
-                      <button 
+                      <button
                         onClick={incrementQty}
                         className="size-10 rounded-xl bg-black flex items-center justify-center text-white hover:text-primary transition-colors active:scale-90"
                       >
@@ -124,13 +124,24 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product, onClos
         </div>
 
         <div className="p-6 bg-black border-t border-white/10">
-          <button 
-            onClick={handleAction}
-            className="w-full h-14 bg-primary hover:bg-white text-black font-black text-lg rounded-xl flex items-center justify-center gap-3 shadow-xl shadow-primary/20 transition-all active:scale-[0.97]"
+          <button
+            onClick={(!product.isSoldOut || isContactOnly) ? handleAction : undefined}
+            disabled={product.isSoldOut && !isContactOnly}
+            className={`w-full h-14 font-black text-lg rounded-xl flex items-center justify-center gap-3 shadow-xl transition-all active:scale-[0.97]
+              ${product.isSoldOut && !isContactOnly
+                ? 'bg-neutral-800 text-white/20 border border-white/5 cursor-not-allowed shadow-none'
+                : 'bg-primary hover:bg-white text-black shadow-primary/20'
+              }`}
           >
-            <span>{isContactOnly ? 'Connect on WhatsApp' : 'Add to Cart'}</span>
+            <span>
+              {product.isSoldOut && !isContactOnly
+                ? 'Sold Out'
+                : (isContactOnly ? 'Connect on WhatsApp' : 'Add to Cart')}
+            </span>
             <span className="material-symbols-outlined">
-              {isContactOnly ? 'chat' : 'shopping_basket'}
+              {product.isSoldOut && !isContactOnly
+                ? 'block'
+                : (isContactOnly ? 'chat' : 'shopping_basket')}
             </span>
           </button>
         </div>

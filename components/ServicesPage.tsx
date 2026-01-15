@@ -25,12 +25,9 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ services, onSelect }) => {
   };
 
   return (
-    <main className="max-w-4xl mx-auto px-4 pt-44 sm:pt-48 pb-20 bg-black text-white min-h-screen">
+    <main className="max-w-4xl mx-auto px-4 pt-44 sm:pt-48 pb-20 text-white min-h-screen">
       <div className="mb-12">
         <div className="flex items-center gap-4 mb-8">
-          <Link to="/" className="size-12 rounded-2xl bg-neutral-900 flex items-center justify-center text-white bento-shadow hover:bg-primary hover:text-black transition-all border border-white/5">
-            <span className="material-symbols-outlined">arrow_back</span>
-          </Link>
           <div>
             <h1 className="text-3xl sm:text-5xl font-black text-white leading-none italic uppercase">Repair <span className="text-primary">Center</span></h1>
             <p className="text-[10px] text-white/40 font-black uppercase tracking-[0.3em] mt-3">Fix It Hardware Service • Kurnool Flagship</p>
@@ -39,11 +36,11 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ services, onSelect }) => {
 
         {/* Quick Stats */}
         <div className="grid grid-cols-2 gap-4 mb-12">
-          <div className="bg-neutral-900/50 p-6 rounded-[32px] border border-white/5 text-center flex flex-col items-center">
+          <div className="bg-black/40 p-6 rounded-[32px] backdrop-blur-md border border-white/5 text-center flex flex-col items-center">
             <span className="material-symbols-outlined text-primary text-3xl mb-2">verified</span>
             <p className="text-[9px] font-black uppercase text-white/40 tracking-widest">OEM Parts</p>
           </div>
-          <div className="bg-neutral-900/50 p-6 rounded-[32px] border border-white/5 text-center flex flex-col items-center">
+          <div className="bg-black/40 p-6 rounded-[32px] backdrop-blur-md border border-white/5 text-center flex flex-col items-center">
             <span className="material-symbols-outlined text-primary text-3xl mb-2">security</span>
             <p className="text-[9px] font-black uppercase text-white/40 tracking-widest">6M Warranty</p>
           </div>
@@ -87,7 +84,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ services, onSelect }) => {
 
         <div className="grid grid-cols-1 gap-6">
           {otherServices.map(service => (
-            <div key={service.id} className="flex flex-col sm:flex-row gap-6 bg-neutral-900 rounded-[32px] overflow-hidden border border-white/5 p-4 items-center group transition-all hover:border-primary/20">
+            <div key={service.id} className="flex flex-col sm:flex-row gap-6 bg-black/40 backdrop-blur-md rounded-[32px] overflow-hidden border border-white/5 p-4 items-center group transition-all hover:border-primary/20">
               <div className="size-40 rounded-2xl overflow-hidden relative shrink-0">
                 <img src={service.image} alt={service.name} className="absolute inset-0 w-full h-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-80 transition-all duration-500" />
                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -109,7 +106,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ services, onSelect }) => {
         </div>
 
         {/* Custom Model Input for Other Brands */}
-        <div className="mt-8 p-8 rounded-[32px] bg-neutral-900 border border-white/5 bento-shadow flex flex-col items-center text-center">
+        <div className="mt-8 p-8 rounded-[32px] bg-black/40 backdrop-blur-md border border-white/5 bento-shadow flex flex-col items-center text-center">
           <h3 className="text-xl font-black text-white uppercase italic mb-2">Can't find your model?</h3>
           <p className="text-xs text-white/40 font-bold uppercase tracking-widest mb-6 max-w-md">Enter your specific android model details below and we'll connect you directly with a technician.</p>
 
@@ -133,7 +130,7 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ services, onSelect }) => {
       </section>
 
       {/* Emergency Contact */}
-      <div className="p-10 rounded-[48px] bg-neutral-900 border border-white/5 text-center relative overflow-hidden bento-shadow">
+      <div className="p-10 rounded-[48px] bg-black/40 backdrop-blur-md border border-white/5 text-center relative overflow-hidden bento-shadow">
         <div className="absolute top-0 right-0 w-48 h-48 bg-primary/5 rounded-full -translate-y-24 translate-x-24 blur-3xl"></div>
         <h3 className="text-2xl font-black text-white mb-4 uppercase italic">Custom <span className="text-primary">Consultation?</span></h3>
         <p className="text-xs text-white/40 font-bold uppercase tracking-widest mb-8">Not sure what's wrong? Chat with Dinesh for a remote diagnostic.</p>

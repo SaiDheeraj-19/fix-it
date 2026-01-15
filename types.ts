@@ -1,13 +1,13 @@
 
-export type Category = 
-  | 'AirPods' 
-  | 'Chargers' 
-  | 'Cables' 
-  | 'Skins' 
-  | 'ScreenGuards' 
-  | 'Speakers' 
-  | 'WiredAudio' 
-  | 'Neckbands' 
+export type Category =
+  | 'AirPods'
+  | 'Chargers'
+  | 'Cables'
+  | 'Skins'
+  | 'ScreenGuards'
+  | 'Speakers'
+  | 'WiredAudio'
+  | 'Neckbands'
   | 'Accessory';
 
 export interface Product {
@@ -20,11 +20,13 @@ export interface Product {
   isPopular?: boolean;
   size: 'large' | 'small'; // bento size
   isQuoteRequired?: boolean;
-  isContactOnly?: boolean; 
+  isContactOnly?: boolean;
   isModelRequired?: boolean; // requires iPhone model selection (11+)
   isUniversalModel?: boolean; // allows any model entry (all phones)
   rating?: number;
   reviews?: number;
+  isHidden?: boolean;
+  isSoldOut?: boolean;
 }
 
 export interface CartItem extends Product {
@@ -41,7 +43,16 @@ export interface Order {
   address: string;
   items: CartItem[];
   total: number;
-  paymentMode: 'UPI' | 'COD';
+  paymentMode: 'UPI' | 'COD' | 'Cash';
   status: 'Pending' | 'Shipped' | 'Completed';
   timestamp: number;
+  couponCode?: string;
+}
+
+export interface Coupon {
+  code: string;
+  discountPercentage: number;
+  isActive: boolean;
+  maxUses?: number;
+  timesUsed: number;
 }

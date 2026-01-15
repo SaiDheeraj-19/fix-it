@@ -15,7 +15,7 @@ const Header: React.FC<HeaderProps> = ({ isAdminLoggedIn, onLogout, searchQuery,
   const location = useLocation();
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 glass-card">
+    <header className="absolute top-0 left-0 right-0 z-40">
       <div className="max-w-4xl mx-auto px-3 sm:px-4 py-3">
         {/* Top Row: Logo & Nav */}
         <div className="flex items-center justify-between gap-4 mb-3">
@@ -69,7 +69,7 @@ const Header: React.FC<HeaderProps> = ({ isAdminLoggedIn, onLogout, searchQuery,
             </div>
 
             {/* New Repair Button beside search bar */}
-            {location.pathname !== '/store' && (
+            {location.pathname !== '/store' && location.pathname !== '/repairs' && (
               <Link
                 to="/repairs"
                 className={`

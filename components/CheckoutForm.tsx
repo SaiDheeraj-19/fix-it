@@ -1,17 +1,18 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { Order, CartItem } from '../types';
+import { Order, CartItem, Coupon } from '../types';
 
 interface CheckoutFormProps {
   onClose: () => void;
   onSubmit: (data: Omit<Order, 'id' | 'timestamp' | 'status'>) => Promise<Order>;
   total: number;
   items: CartItem[];
+  coupons: Coupon[];
 }
 
 type CheckoutStep = 'DETAILS' | 'PAYMENT' | 'PROCESSING' | 'SUCCESS';
 
-const CheckoutForm: React.FC<CheckoutFormProps> = ({ onClose, onSubmit, total, items }) => {
+const CheckoutForm: React.FC<CheckoutFormProps> = ({ onClose, onSubmit, total, items, coupons }) => {
   const [step, setStep] = useState<CheckoutStep>('DETAILS');
   const [formData, setFormData] = useState({
     name: '',
@@ -28,11 +29,39 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onClose, onSubmit, total, i
     state: 'Andhra Pradesh'
   });
 
+  const [couponCode, setCouponCode] = useState('');
+  const [discountPercent, setDiscountPercent] = useState(0);
+  const [couponMessage, setCouponMessage] = useState<{ text: string, type: 'success' | 'error' } | null>(null);
+
   const [transactionIdInput, setTransactionIdInput] = useState('');
   const [verificationStatus, setVerificationStatus] = useState('');
   const [createdOrder, setCreatedOrder] = useState<Order | null>(null);
   const [paymentTimer, setPaymentTimer] = useState(300);
   const [isVerifying, setIsVerifying] = useState(false);
+
+  const discountAmount = (total * discountPercent) / 100;
+  const finalTotal = total - discountAmount;
+
+  const handleApplyCoupon = () => {
+
+    if (!couponCode.trim()) {
+      setCouponMessage({ text: 'Please enter a code', type: 'error' });
+      return;
+    }
+    const coupon = coupons.find(c => c.code.toUpperCase() === couponCode.trim().toUpperCase() && c.isActive);
+    if (coupon) {
+      if (coupon.maxUses && coupon.timesUsed >= coupon.maxUses) {
+        setDiscountPercent(0);
+        setCouponMessage({ text: 'Coupon limit reached', type: 'error' });
+        return;
+      }
+      setDiscountPercent(coupon.discountPercentage);
+      setCouponMessage({ text: `Success! ${coupon.discountPercentage}% OFF applied`, type: 'success' });
+    } else {
+      setDiscountPercent(0);
+      setCouponMessage({ text: 'Invalid or expired coupon', type: 'error' });
+    }
+  };
 
   const upiId = "9182919360-6@ibl";
   const ownerPhone = "919182919360";
@@ -42,8 +71,9 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onClose, onSubmit, total, i
 
   // Pre-filled UPI intent link with transaction note (tn)
   const upiLink = useMemo(() => {
-    return `upi://pay?pa=${upiId}&pn=Fix%20It%20Kurnool&tr=${transactionRef}&am=${total}&cu=INR&mc=5411&tn=FixIt%20Order`;
-  }, [total, transactionRef]);
+    // Note: 'am' param must use finalTotal to reflect discount in UPI app
+    return `upi://pay?pa=${upiId}&pn=Fix%20It%20Kurnool&tr=${transactionRef}&am=${finalTotal}&cu=INR&mc=5411&tn=FixIt%20Order`;
+  }, [finalTotal, transactionRef]);
 
   useEffect(() => {
     let interval: any;
@@ -63,6 +93,12 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onClose, onSubmit, total, i
 
   const handleProceedToPayment = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!formData.name || !formData.email || !formData.phone || !addressData.street || !addressData.city || !addressData.pincode) {
+      alert("Please fill in all required delivery details.");
+      return;
+    }
+
     if (formData.paymentMode === 'COD') {
       confirmOrder();
     } else {
@@ -99,14 +135,14 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onClose, onSubmit, total, i
             phone: formData.phone,
             address: fullAddress,
             items,
-            total,
-            paymentMode: formData.paymentMode
+            total: finalTotal,
+            paymentMode: formData.paymentMode,
+            couponCode: discountPercent > 0 ? couponCode.trim().toUpperCase() : undefined
           });
           setCreatedOrder(order);
           setStep('SUCCESS');
         } catch (error) {
           console.error("Order creation failed", error);
-          // Handle error state if needed, simpler to just log for now
         } finally {
           setIsVerifying(false);
         }
@@ -142,6 +178,127 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onClose, onSubmit, total, i
       `_Order is ready for processing._`;
 
     window.open(`https://wa.me/${ownerPhone}?text=${encodeURIComponent(message)}`, '_blank');
+  };
+
+  const handleDownloadInvoice = () => {
+    if (!createdOrder) return;
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+
+    const receiptContent = `
+      <html>
+        <head>
+          <title>Invoice #${createdOrder.id.split('-').pop()}</title>
+          <style>
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+            body { font-family: 'Inter', sans-serif; padding: 40px; max-width: 800px; margin: 0 auto; color: #000; }
+            .header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 40px; border-bottom: 2px solid #eee; padding-bottom: 20px; }
+            .brand-logo { position: relative; width: 60px; height: 60px; margin-right: 15px; }
+            .brand-text { font-size: 32px; font-weight: 900; text-transform: uppercase; letter-spacing: -1px; line-height: 1; }
+            .brand-text span { color: #facc15; }
+            .brand-container { display: flex; align-items: center; }
+            .invoice-details { text-align: right; }
+            .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+            .card { background: #f9f9f9; padding: 20px; border-radius: 12px; }
+            .label { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #666; margin-bottom: 5px; letter-spacing: 1px; }
+            .value { font-size: 14px; font-weight: 600; line-height: 1.4; }
+            table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+            th { text-align: left; font-size: 10px; text-transform: uppercase; color: #666; padding: 10px; border-bottom: 1px solid #ddd; }
+            td { padding: 15px 10px; font-size: 13px; font-weight: 500; border-bottom: 1px solid #eee; }
+            .total-row { display: flex; justify-content: space-between; font-size: 18px; font-weight: 900; margin-top: 20px; padding-top: 20px; border-top: 2px solid #000; }
+            @media print {
+              body { padding: 0; }
+              .no-print { display: none; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div class="brand-container">
+               <!-- SVG Logo Inline -->
+               <svg viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" class="brand-logo">
+                 <path d="M145 70 H442 V367" stroke="black" stroke-width="75" stroke-linecap="round" stroke-linejoin="round"/>
+                 <path d="M145 185 H327 V367" stroke="#FF0000" stroke-width="75" stroke-linecap="round" stroke-linejoin="round"/>
+                 <rect x="145" y="420" width="45" height="45" fill="black" />
+               </svg>
+               <div class="brand-text">Fix It<span>.</span></div>
+               <div style="margin-top: 10px; font-size: 11px; color: #666; line-height: 1.4;">
+                 <p style="margin:0; font-weight: 700;">Shop no 6, Venkateshwara Swamy Temple Line,</p>
+                 <p style="margin:0;">Near ITC Circle, Krishna Reddy Nagar,</p>
+                 <p style="margin:0;">New Krishna Nagar, Kalluru, AP - 518002</p>
+                 <p style="margin:0;">+91 91829 19360</p>
+               </div>
+            </div>
+            <div class="invoice-details">
+              <div class="type" style="font-weight: 900; font-size: 20px; margin-bottom: 8px;">INVOICE</div>
+              <div class="meta">#${createdOrder.id.split('-').pop()}</div>
+              <div class="meta" style="color: #666;">${new Date(createdOrder.timestamp).toLocaleDateString()}</div>
+            </div>
+          </div>
+
+          <div class="grid">
+            <div class="card">
+              <div class="label">Billed To</div>
+              <div class="value">${createdOrder.customerName}</div>
+              <div class="value" style="color: #666;">${createdOrder.email}</div>
+              <div class="value" style="color: #666;">${createdOrder.phone}</div>
+              <div class="value" style="margin-top: 8px; font-size: 12px; white-space: pre-wrap;">${createdOrder.address}</div>
+            </div>
+            <div class="card">
+              <div class="label">Payment Info</div>
+              <div class="value">Method: ${createdOrder.paymentMode}</div>
+              <div class="value" style="color: #666;">Status: ${createdOrder.status}</div>
+              ${createdOrder.couponCode ? `<div class="value" style="margin-top:5px; color:#22c55e;">Coupon: ${createdOrder.couponCode}</div>` : ''}
+            </div>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Qty</th>
+                <th style="text-align: right;">Price</th>
+                <th style="text-align: right;">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${createdOrder.items.map(item => `
+                <tr>
+                  <td>
+                    <div style="font-weight: 700;">${item.name}</div>
+                    ${item.phoneDetails ? `<div style="font-size: 10px; color: #666; text-transform: uppercase; margin-top: 2px;">${item.phoneDetails}</div>` : ''}
+                  </td>
+                  <td>${item.quantity}</td>
+                  <td style="text-align: right;">₹${getItemPrice(item).toLocaleString()}</td>
+                  <td style="text-align: right;">₹${(getItemPrice(item) * item.quantity).toLocaleString()}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+
+          <div class="total-row">
+            <span>Total Amount</span>
+            <span>₹${createdOrder.total.toLocaleString()}</span>
+          </div>
+
+          <div style="margin-top: 50px; text-align: center; font-size: 11px; color: #999;">
+            <p>Thank you for shopping with Fix It Kurnool!</p>
+            <p>Authorized Dealer for Premium Mobile Accessories</p>
+          </div>
+          <script>
+            window.onload = () => {
+                 setTimeout(() => {
+                     window.print();
+                     window.close();
+                 }, 500);
+            };
+          </script>
+        </body>
+      </html>
+    `;
+
+    printWindow.document.write(receiptContent);
+    printWindow.document.close();
   };
 
   if (step === 'PROCESSING') {
@@ -205,11 +362,11 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onClose, onSubmit, total, i
 
           <div className="space-y-4">
             <button
-              onClick={notifyOwnerOnWhatsApp}
+              onClick={handleDownloadInvoice}
               className="w-full h-14 bg-primary text-black font-black rounded-xl flex items-center justify-center gap-3 shadow-xl shadow-primary/30 transition-all hover:bg-white active:scale-95"
             >
-              <span>Share Receipt to WhatsApp</span>
-              <span className="material-symbols-outlined">chat</span>
+              <span>Download Invoice</span>
+              <span className="material-symbols-outlined">download</span>
             </button>
             <button
               onClick={onClose}
@@ -235,7 +392,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onClose, onSubmit, total, i
               </div>
               <div>
                 <h2 className="text-lg font-black text-white leading-none tracking-tight">Scan & Pay</h2>
-                <p className="text-[10px] text-white/40 uppercase font-black tracking-widest mt-1">Amount: ₹{total.toLocaleString()}</p>
+                <p className="text-[10px] text-white/40 uppercase font-black tracking-widest mt-1">Amount: ₹{finalTotal.toLocaleString()}</p>
               </div>
             </div>
             <div className="text-right">
@@ -443,6 +600,31 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onClose, onSubmit, total, i
           </div>
 
           <div className="space-y-3">
+            <label className="block text-xs font-black text-white/40 uppercase tracking-widest ml-1">Apply Coupon</label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={couponCode}
+                onChange={(e) => setCouponCode(e.target.value.toUpperCase().replace(/\s/g, ''))}
+                placeholder="Enter Code"
+                className="flex-1 h-12 px-4 rounded-xl border border-white/10 bg-black text-white text-sm font-bold placeholder:text-white/20 uppercase"
+              />
+              <button
+                type="button"
+                onClick={handleApplyCoupon}
+                className="px-6 h-12 bg-white/10 hover:bg-white/20 text-white font-black uppercase text-xs rounded-xl transition-colors"
+              >
+                Apply
+              </button>
+            </div>
+            {couponMessage && (
+              <p className={`text-[10px] font-bold ${couponMessage.type === 'success' ? 'text-green-500' : 'text-red-500'}`}>
+                {couponMessage.text}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-3">
             <label className="block text-xs font-black text-white/40 uppercase tracking-widest ml-1">Select Payment</label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <button
@@ -480,9 +662,15 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onClose, onSubmit, total, i
                 </div>
               ))}
             </div>
+            {discountPercent > 0 && (
+              <div className="flex justify-between text-[11px] font-bold mt-2 text-green-500">
+                <span>Discount ({discountPercent}%)</span>
+                <span>-₹{discountAmount.toLocaleString()}</span>
+              </div>
+            )}
             <div className="border-t border-white/10 mt-4 pt-4 flex justify-between items-center">
               <span className="font-black text-white/30 text-[9px] uppercase tracking-widest">Grand Total</span>
-              <span className="font-black text-primary text-xl">₹{total.toLocaleString()}</span>
+              <span className="font-black text-primary text-xl">₹{finalTotal.toLocaleString()}</span>
             </div>
           </div>
         </form>
